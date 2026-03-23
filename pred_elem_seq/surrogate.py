@@ -500,7 +500,7 @@ class ANN(object):
             ann_model = ConvLinNet(self).to(device)
         else:
             raise ValueError(
-                "nn_type must be 'lin', 'conv', 'conv_lin', or 'conv_lin_inj'"
+                "nn_type must be 'conv' or 'conv_lin'"
             )
 
         optimizer = configure_optimizers(
@@ -533,18 +533,19 @@ class ANN(object):
         fig, ax = plt.subplots()
         lr_finder.plot(skip_start=0, skip_end=0, ax=ax, suggest_lr=False)
         # get datafiles directory in current working directory
-        datafiles_dir = Path("pred_elem_seq/datafiles")
+        lr_finder_dir = Path("pred_elem_seq/datafiles/figures/learn rate finder")
+        lr_finder_dir.mkdir(parents=True, exist_ok=True)
 
         fig.savefig(
-            datafiles_dir
-            / f"figures/learn rate finder/learn_rate_range_finder - {self.cfg.nn_type}.svg"
+            lr_finder_dir
+            / f"learn_rate_range_finder - {self.cfg.nn_type}.svg"
         )
 
         elapsed_t = {"learn rate finder time (minutes)": (time.time() - start_t) / 60}
         write_dic_to_file(
             elapsed_t,
-            datafiles_dir
-            / f"figures/learn rate finder/learn_rate_range_finder - {self.cfg.nn_type}.log",
+            lr_finder_dir
+            / f"learn_rate_range_finder - {self.cfg.nn_type}.log",
         )
 
     def train_test(self, ann_datasets, trial_name="0", pretrn_model=None):
@@ -671,7 +672,7 @@ class ANN(object):
             ann_model = ConvLinNet(self).to(device)
         else:
             raise ValueError(
-                "nn_type must be 'lin', 'conv', 'conv_lin', or 'conv_lin_inj'"
+                "nn_type must be 'conv' or 'conv_lin'"
             )
 
         # use the AdamW solver for now
@@ -748,7 +749,7 @@ class ANN(object):
 
         # write ann_model to file
         ann_dir_path = Path("pred_elem_seq/datafiles/ann")
-        pretrained_path = "pre_"
+        ann_dir_path.mkdir(parents=True, exist_ok=True)
         ext_path = ".sav"
 
         if nn_type == "conv":
@@ -764,7 +765,7 @@ class ANN(object):
             )
         else:
             raise ValueError(
-                "nn_type must be 'lin', 'conv', 'conv_lin', or 'conv_lin_inj'"
+                "nn_type must be 'conv' or 'conv_lin'"
             )
 
         # save neural network model as binary .sav file
@@ -823,12 +824,7 @@ class ANN(object):
         ext_path = ".json"
 
         # save neural network model as binary .sav file
-        if pretrained:
-            res_model_path = ann_dir_path / (
-                res_path + pretrained_path + ann_type_path + ext_path
-            )
-        else:
-            res_model_path = ann_dir_path / (res_path + ann_type_path + ext_path)
+        res_model_path = ann_dir_path / (res_path + ann_type_path + ext_path)
 
         # create surrogate model training results dictionary
         dict_res = {
@@ -1763,8 +1759,7 @@ class AnnDatasets(object):
             f"pred_elem_seq/datafiles/xy/shards/test/n_lhs_{self.cfg.n_lhs}"
         )
         # make directory if nonexistent
-        if not os.path.isdir(test_shard_dir):
-            test_shard_dir.mkdir()
+        test_shard_dir.mkdir(parents=True, exist_ok=True)
         return test_shard_dir
 
     def get_train_shard_dir(self) -> Path:
@@ -1772,8 +1767,7 @@ class AnnDatasets(object):
             f"pred_elem_seq/datafiles/xy/shards/train/n_lhs_{self.cfg.n_lhs}"
         )
         # make directory if nonexistent
-        if not os.path.isdir(train_shard_dir):
-            train_shard_dir.mkdir()
+        train_shard_dir.mkdir(parents=True, exist_ok=True)
         return train_shard_dir
 
     def get_shard_path_lists(self, shard_dir):
@@ -1897,45 +1891,48 @@ class AnnDatasets(object):
             # if gathering just testing data, the scaler must be defined
             raise ValueError("if train_perc == 0, scaler must be provided")
 
-        # get current working directory with python project datafiles
-        datafiles_dir = Path("pred_elem_seq/datafiles")
+        # get scaler and xy directories
+        scaler_dir = Path("pred_elem_seq/datafiles/scaler")
+        scaler_dir.mkdir(parents=True, exist_ok=True)
+        xy_dir = Path("pred_elem_seq/datafiles/xy")
+        xy_dir.mkdir(parents=True, exist_ok=True)
 
         # if the design of experiment is a univariate-focused one
         if self.cfg.n_lhs_uni != 0:
             # if doing a k-folds cross validation:
             if isinstance(cross_val_indcs, dict):
                 # get path of base model univariate scaler
-                scaler_path = datafiles_dir / (
-                    f"scaler/scaler_uni - {building.name} - n_lhs_{self.cfg.n_lhs_uni} - "
+                scaler_path = scaler_dir / (
+                    f"scaler_uni - {building.name} - n_lhs_{self.cfg.n_lhs_uni} - "
                     f"n_uni_{self.cfg.n_smp_uni} - seq_{self.cfg.seq_len} - par_{building.n_unknown_params} - "
                     f"fold_{cross_val_indcs['fold']} - time_{building.sim_time_freq}.sav"
                 )
                 # get path of univariate sim_energies and doe_params parquet files
-                sim_parq_path = datafiles_dir / (
-                    f"xy/xy_uni_sim - {building.name} - n_lhs_{self.cfg.n_lhs_uni} - "
+                sim_parq_path = xy_dir / (
+                    f"xy_uni_sim - {building.name} - n_lhs_{self.cfg.n_lhs_uni} - "
                     f"n_uni_{self.cfg.n_smp_uni} - par_{building.n_unknown_params} - fold_{cross_val_indcs['fold']} - "
                     f"time_{building.sim_time_freq} - {self.sim_precision}.parquet"
                 )
-                params_parq_path = datafiles_dir / (
-                    f"xy/xy_uni_params - {building.name} - n_lhs_{self.cfg.n_lhs_uni} - "
+                params_parq_path = xy_dir / (
+                    f"xy_uni_params - {building.name} - n_lhs_{self.cfg.n_lhs_uni} - "
                     f"n_uni_{self.cfg.n_smp_uni} - par_{building.n_unknown_params} - fold_{cross_val_indcs['fold']} - "
                     f"time_{building.sim_time_freq}.parquet"
                 )
             else:
                 # get path of base model univariate scaler
-                scaler_path = datafiles_dir / (
-                    f"scaler/scaler_uni - {building.name} - n_lhs_{self.cfg.n_lhs_uni} - "
+                scaler_path = scaler_dir / (
+                    f"scaler_uni - {building.name} - n_lhs_{self.cfg.n_lhs_uni} - "
                     f"n_uni_{self.cfg.n_smp_uni} - seq_{self.cfg.seq_len} - par_{building.n_unknown_params} - "
                     f"time_{building.sim_time_freq}.sav"
                 )
                 # get path of univariate sim_energies and doe_params parquet files
-                sim_parq_path = datafiles_dir / (
-                    f"xy/xy_uni_sim - {building.name} - n_lhs_{self.cfg.n_lhs_uni} - "
+                sim_parq_path = xy_dir / (
+                    f"xy_uni_sim - {building.name} - n_lhs_{self.cfg.n_lhs_uni} - "
                     f"n_uni_{self.cfg.n_smp_uni} - par_{building.n_unknown_params} - time_{building.sim_time_freq} - "
                     f"{self.sim_precision}.parquet"
                 )
-                params_parq_path = datafiles_dir / (
-                    f"xy/xy_uni_params - {building.name} - n_lhs_{self.cfg.n_lhs_uni} - "
+                params_parq_path = xy_dir / (
+                    f"xy_uni_params - {building.name} - n_lhs_{self.cfg.n_lhs_uni} - "
                     f"n_uni_{self.cfg.n_smp_uni} - par_{building.n_unknown_params} - time_{building.sim_time_freq}.parquet"
                 )
 
@@ -1943,35 +1940,35 @@ class AnnDatasets(object):
             # if doing a k-folds cross validation:
             if isinstance(cross_val_indcs, dict):
                 # get path of base model orthogonal scaler
-                scaler_path = datafiles_dir / (
-                    f"scaler/scaler_orth - {building.name} - n_lhs_{self.cfg.n_lhs} - "
+                scaler_path = scaler_dir / (
+                    f"scaler_orth - {building.name} - n_lhs_{self.cfg.n_lhs} - "
                     f"seq_{self.cfg.seq_len} - par_{building.n_unknown_params} - "
                     f"fold_{cross_val_indcs['fold']} - time_{building.sim_time_freq}.sav"
                 )
                 # get path of orthogonal sim_energies and doe_params parquet files
-                sim_parq_path = datafiles_dir / (
-                    f"xy/xy_orth_sim - {building.name} - n_lhs_{self.cfg.n_lhs} - "
+                sim_parq_path = xy_dir / (
+                    f"xy_orth_sim - {building.name} - n_lhs_{self.cfg.n_lhs} - "
                     f"par_{building.n_unknown_params} - fold_{cross_val_indcs['fold']} - "
                     f"time_{building.sim_time_freq} - {self.sim_precision}.parquet"
                 )
-                params_parq_path = datafiles_dir / (
-                    f"xy/xy_orth_params - {building.name} - n_lhs_{self.cfg.n_lhs} - "
+                params_parq_path = xy_dir / (
+                    f"xy_orth_params - {building.name} - n_lhs_{self.cfg.n_lhs} - "
                     f"par_{building.n_unknown_params} - fold_{cross_val_indcs['fold']} - "
                     f"time_{building.sim_time_freq}.parquet"
                 )
             else:
                 # get path of base model orthogonal scaler
-                scaler_path = datafiles_dir / (
-                    f"scaler/scaler_orth - {building.name} - n_lhs_{self.cfg.n_lhs} - "
+                scaler_path = scaler_dir / (
+                    f"scaler_orth - {building.name} - n_lhs_{self.cfg.n_lhs} - "
                     f"seq_{self.cfg.seq_len} - par_{building.n_unknown_params} - time_{building.sim_time_freq}.sav"
                 )
                 # get path of orthogonal sim_energies and doe_params parquet files
-                sim_parq_path = datafiles_dir / (
-                    f"xy/xy_orth_sim - {building.name} - n_lhs_{self.cfg.n_lhs} - "
+                sim_parq_path = xy_dir / (
+                    f"xy_orth_sim - {building.name} - n_lhs_{self.cfg.n_lhs} - "
                     f"par_{building.n_unknown_params} - time_{building.sim_time_freq} - {self.sim_precision}.parquet"
                 )
-                params_parq_path = datafiles_dir / (
-                    f"xy/xy_orth_params - {building.name} - n_lhs_{self.cfg.n_lhs} - "
+                params_parq_path = xy_dir / (
+                    f"xy_orth_params - {building.name} - n_lhs_{self.cfg.n_lhs} - "
                     f"par_{building.n_unknown_params} - time_{building.sim_time_freq}.parquet"
                 )
 
@@ -2045,14 +2042,14 @@ class AnnDatasets(object):
         # record time it took to get datasets if run_lhs==True
         if run_lhs:
             if self.cfg.n_lhs_uni != 0:
-                run_time_path = datafiles_dir / (
-                    f"xy/time_xy_uni - {building.name} - n_lhs_{self.cfg.n_lhs_uni} - "
+                run_time_path = xy_dir / (
+                    f"time_xy_uni - {building.name} - n_lhs_{self.cfg.n_lhs_uni} - "
                     f"n_uni_{self.cfg.n_smp_uni} - par_{building.n_unknown_params} - time_{building.sim_time_freq} - "
                     f"{self.sim_precision}.json"
                 )
             else:
-                run_time_path = datafiles_dir / (
-                    f"xy/time_xy_orth - {building.name} - n_lhs_{self.cfg.n_lhs} - "
+                run_time_path = xy_dir / (
+                    f"time_xy_orth - {building.name} - n_lhs_{self.cfg.n_lhs} - "
                     f"par_{building.n_unknown_params} - time_{building.sim_time_freq} - {self.sim_precision}.json"
                 )
             write_dic_to_file(
@@ -2197,12 +2194,13 @@ def k_fold_cross_val(ann, n_folds=5, train=False, run_ann=False):
             run_time,
         ]
         print("R^2", metrics["r2"])
+        
+        res_dir_path = Path("pred_elem_seq/datafiles/results")
+        res_dir_path.mkdir(parents=True, exist_ok=True)
         # write cross validation dataframe to csv file
         cross_val_res.to_csv(
-            Path(
-                "pred_elem_seq/datafiles/results/cross_validation_results - just fold3.csv"
+            res_dir_path / f"cross_validation_results - n_folds_{n_folds}.csv"
             )
-        )
 
 
 def get_metrics(res, uni_perf=False):
@@ -2297,11 +2295,11 @@ def year_sum_res(ann_model_path, ann_datasets, run_ann=False):
     res_metrics_df[r"$CVRMSE\ \%$"] = np.append(
         metrics["cvrmse"], np.mean(metrics["cvrmse"])
     )
+    res_dir_path = Path("pred_elem_seq/datafiles/results")
+    res_dir_path.mkdir(parents=True, exist_ok=True)
     res_metrics_df.to_csv(
-        Path(
-            f"pred_elem_seq/datafiles/results/{start} - {ann_model_path.stem} - annual sum metrics.csv"
+        res_dir_path / f"{start} - {ann_model_path.stem} - annual sum metrics.csv"
         )
-    )
 
 
 def get_ann_test_res(ann_datasets_list=None, run_ann=False):
@@ -2462,29 +2460,27 @@ def get_ann_test_res(ann_datasets_list=None, run_ann=False):
         ]
         print(f"done {i + 1} of {len(res_table)}")
 
+        res_dir_path = Path("pred_elem_seq/datafiles/results")
+        res_dir_path.mkdir(parents=True, exist_ok=True)
+        
         if uni_perf:
             res_table.to_csv(
-                Path("pred_elem_seq/datafiles/results/ann_test_results_uni.csv")
-            )
+                res_dir_path / "ann_test_results_uni.csv")
         else:
             res_table.to_csv(
-                Path(
-                    "pred_elem_seq/datafiles/results/ann_test_results_with_n_params.csv"
+                 res_dir_path / "ann_test_results.csv"
                 )
-            )
 
 
 def get_model_preds_prqt(ann_model_path, ann_datasets, run_ann=False):
-
+    # create ann_outputs directory if not already existent
+    ann_outputs_dir_path = Path("pred_elem_seq/datafiles/ann/ann_outputs")
+    ann_outputs_dir_path.mkdir(parents=True, exist_ok=True)
     # define parquet path to store predictions
     if ann_datasets.cfg.n_lhs_uni != 0:
-        parquet_path = Path(
-            f"pred_elem_seq/datafiles/ann/ann_outputs/test_lhs_uni_{ann_datasets.cfg.n_lhs_uni} - {ann_model_path.stem}.parquet"
-        )
+        parquet_path = ann_outputs_dir_path / f"test_lhs_uni_{ann_datasets.cfg.n_lhs_uni} - {ann_model_path.stem}.parquet"
     else:
-        parquet_path = Path(
-            f"pred_elem_seq/datafiles/ann/ann_outputs/test_lhs_{ann_datasets.cfg.n_lhs} - {ann_model_path.stem}.parquet"
-        )
+        parquet_path = ann_outputs_dir_path / f"test_lhs_{ann_datasets.cfg.n_lhs} - {ann_model_path.stem}.parquet"
 
     # get ann model attributes from JSON file
     ann_attr_path = ann_model_path.parent / f"res_{ann_model_path.stem}.json"

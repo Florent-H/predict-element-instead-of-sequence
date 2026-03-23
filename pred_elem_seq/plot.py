@@ -350,10 +350,9 @@ def plot_onecyclelr_schedule(
     ax.set_xlabel("Epochs", fontproperties=font_bold)
     ax.grid()
 
-    fig.savefig(
-        Path(
-            f"pred_elem_seq/datafiles/figures/learn_rate/onecyclelr scheduler - max_lr_{max_lr}.pdf"
-        ),
+    learn_rate_dir_path = Path("pred_elem_seq/datafiles/figures/learn_rate")
+    learn_rate_dir_path.mkdir(parents=True, exist_ok=True)
+    fig.savefig(learn_rate_dir_path / f"onecyclelr scheduler - max_lr_{max_lr}.pdf",
         bbox_inches="tight",
         pad_inches=0,
     )
@@ -486,11 +485,10 @@ def time_of_day_errors(ann_model_path, ann_datasets, run_ann):
         ha="left",
         va="center",
     )
-
+    error_dir_path = Path("pred_elem_seq/datafiles/figures/error")
+    error_dir_path.mkdir(parents=True, exist_ok=True)
     fig.savefig(
-        Path(
-            f"pred_elem_seq/datafiles/figures/error/test_lhs_{ann_datasets.cfg.n_lhs} - {ann_model_path.stem} - time of day error.pdf"
-        ),
+        error_dir_path / f"test_lhs_{ann_datasets.cfg.n_lhs} - {ann_model_path.stem} - time of day error.pdf",
         bbox_inches="tight",
         pad_inches=0,
     )
@@ -533,11 +531,11 @@ def error_plots(ann_model_path, ann_datasets, run_ann=False):
         start = f"test_lhs_uni_{ann_datasets.cfg.n_lhs_uni}"
     else:
         start = f"test_lhs_{ann_datasets.cfg.n_lhs}"
+    res_dir_path = Path("pred_elem_seq/datafiles/results")
+    res_dir_path.mkdir(parents=True, exist_ok=True)
     res_metrics_df.to_csv(
-        Path(
-            f"pred_elem_seq/datafiles/results/{start} - {ann_model_path.stem} - error metrics.csv"
+       res_dir_path / f"{start} - {ann_model_path.stem} - error metrics.csv"
         )
-    )
 
     # calculate error
     error = res["labels"] - res["preds"]
@@ -656,10 +654,10 @@ def error_plots(ann_model_path, ann_datasets, run_ann=False):
         fontproperties=font_bold,
     )
 
+    error_dir_path =  Path("pred_elem_seq/datafiles/figures/error")
+    error_dir_path.mkdir(parents=True, exist_ok=True)
     fig.savefig(
-        Path(
-            f"pred_elem_seq/datafiles/figures/error/{start} - {ann_model_path.stem} - heat_err.pdf"
-        ),
+        error_dir_path / f"{start} - {ann_model_path.stem} - heat_err.pdf",
         bbox_inches="tight",
         pad_inches=0,
     )
@@ -757,9 +755,7 @@ def error_plots(ann_model_path, ann_datasets, run_ann=False):
     )
 
     fig.savefig(
-        Path(
-            f"pred_elem_seq/datafiles/figures/error/{start} - {ann_model_path.stem} - cool_err.pdf"
-        ),
+        error_dir_path / f"{start} - {ann_model_path.stem} - cool_err.pdf",
         bbox_inches="tight",
         pad_inches=0,
     )
@@ -800,10 +796,11 @@ def predict_year(ann_model_path, ann_datasets, run_ann):
     res_metrics_df[r"$CVRMSE\ \%$"] = np.append(
         metrics["cvrmse"], np.mean(metrics["cvrmse"])
     )
+    res_dir_path = Path("pred_elem_seq/datafiles/results")
+    res_dir_path.mkdir(parents=True, exist_ok=True)
     res_metrics_df.to_csv(
-        Path(
-            f"pred_elem_seq/datafiles/results/test_lhs_{ann_datasets.cfg.n_lhs} - {ann_model_path.stem} - error metrics - weather.csv"
-        )
+        res_dir_path / f"test_lhs_{ann_datasets.cfg.n_lhs} - {ann_model_path.stem} - error metrics - weather.csv"
+        
     )
 
     font_reg = FontProperties(weight="normal", size=8)
@@ -875,10 +872,10 @@ def predict_year(ann_model_path, ann_datasets, run_ann):
     ax2.set_ylabel("Heating Error [kWh]", fontproperties=font_bold, color="tomato")
     ax2.grid(which="both", color="k", linewidth=0.7, alpha=0.2)
 
+    year_pred_dir_path = Path("pred_elem_seq/datafiles/results")
+    year_pred_dir_path.mkdir(parents=True, exist_ok=True)
     fig.savefig(
-        Path(
-            f"pred_elem_seq/datafiles/figures/year_pred/{ann_model_path.stem} - heat_feb - weather.pdf"
-        ),
+        year_pred_dir_path / f"{ann_model_path.stem} - heat_feb - weather.pdf",
         bbox_inches="tight",
         pad_inches=0,
     )
@@ -1094,9 +1091,10 @@ def plot_climate_map_errors(ann_model_path, ann_datasets, weather_list):
         va="center",
         fontproperties=font_bold_large,
     )
-
+    climate_dir_path = Path("pred_elem_seq/datafiles/figures/climate_map")
+    climate_dir_path.mkdir(parents=True, exist_ok=True)
     fig.savefig(
-        "pred_elem_seq/datafiles/figures/climate_map/Climate map errors.pdf",
+        climate_dir_path / "Climate map errors.pdf",
         bbox_inches="tight",
         pad_inches=0,
     )
@@ -1241,8 +1239,11 @@ def make_climate_map_paul():
     plt.legend()
     for text in plt.legend().get_texts():
         text.set_fontproperties(font_reg)
+    
+    climate_dir_path = Path("pred_elem_seq/datafiles/figures/climate_map")
+    climate_dir_path.mkdir(parents=True, exist_ok=True)
     plt.savefig(
-        Path("pred_elem_seq/datafiles/figures/climate_map/Climate map.pdf"),
+        climate_dir_path / "Climate map.pdf",
         bbox_inches="tight",
         pad_inches=0,
     )

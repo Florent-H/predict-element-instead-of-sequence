@@ -116,13 +116,13 @@ def ann(nn_type, ann_conv_lin, ann_conv):
 
 @pytest.fixture
 def n_lhs():
-    n_l = 23**2 # 71**2 # 67**2 # 30_000
+    n_l = 19**2 # 71**2 # 67**2 # 30_000
     yield n_l
 
 
 @pytest.fixture
 def n_lhs_train():
-    n_l = 23**2 # 71**2 # 67**2
+    n_l = 19**2 # 71**2 # 67**2
     yield n_l
 
 
@@ -140,7 +140,7 @@ def n_smp_uni():
 
 @pytest.fixture
 def train_perc(n_lhs):
-    if n_lhs in (23**2, 71**2):
+    if n_lhs in (19**2, 71**2):
         t_p = 0.8
     elif n_lhs == 67**2:
         t_p = 1
@@ -158,9 +158,6 @@ def scaler(building, n_lhs_train, seq_len):
         f"pred_elem_seq/datafiles/scaler/scaler_orth - Medium_Office - n_lhs_{n_lhs_train} - seq_{seq_len} - "
         f"par_{building.n_unknown_params} - time_h.sav"
     )
-    # s_p = Path(
-    #     f"pred_elem_seq/datafiles/scaler/scaler_orth - Medium_Office - n_lhs_5041 - seq_8 - par_14 - fold_3 - time_h.sav"
-    # )
 
     # read scaler from file
     with open(s_p, "rb") as fr:
@@ -230,7 +227,7 @@ def ann_ds_weather_train(ann, get_dataset, sim_precision, obj_names, capsys):
         )
         if get_dataset:
             a_d.get_datasets(
-                run_lhs=False, shards=True, save_shards=True, weather_list=weather_list
+                run_lhs=True, shards=True, save_shards=True, weather_list=weather_list
             )
 
     yield a_d

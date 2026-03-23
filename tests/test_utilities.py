@@ -12,6 +12,6 @@ def test_df_to_latex():
     from pred_elem_seq import df_to_latex
 
     csv_path = Path(
-        "pred_elem_seq/datafiles/results/ann_test_results_sorted_by_size.csv"
+        "pred_elem_seq/datafiles/results/ann_test_results.csv"
     )
     df_to_latex(csv_path, vertical_header=False)
