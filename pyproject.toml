@@ -1,0 +1,47 @@
+[project]
+name = "pred_elem_seq"
+version = "1.0"
+dependencies = [
+    "matplotlib",
+    "pytest",
+    "numpy==2.4.1",
+    "scipy",
+    "pandas~=2.3",
+    "scikit-learn",
+    "pyarrow",
+    "setuptools",
+    "torch-lr-finder",
+    "torch==2.9.1",
+    "wakepy",
+    ]
+requires-python = ">=3.13, <3.14"
+authors = [
+    { name = "Florent Herbinger", email = "florent.herbinger@outlook.com" }
+]
+maintainers = [
+    { name = "Florent Herbinger", email = "florent.herbinger@outlook.com" }
+]
+description = "This is the code repository for the article 'Predict the element instead of the sequence: ResNet surrogate method for very accurate predictions of hourly building energy' in the Applied Energy journal"
+readme = "README.md"
+license = "MIT"  # or license = {file = "LICENSE.txt"} for legacy declaration
+# license-files = ["LICEN[CS]E.*"]
+keywords = ["surrogate", "meta-model", "metamodel", "bem", "building energy model", "EnergyPlus", "machine learning", "artificial neural network", "ResNet"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python"
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch" }
+
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
+
+[project.urls]
+Homepage = "https://github.com/Florent-H/predict-element-instead-of-seqeunce"
+Documentation = "https://github.com/Florent-H/predict-element-instead-of-seqeunce"
+Repository = "https://github.com/Florent-H/predict-element-instead-of-seqeunce"
+"Bug Tracker" = "https://github.com/Florent-H/predict-element-instead-of-seqeunce"
+Changelog = "https://github.com/Florent-H/predict-element-instead-of-seqeunce"
