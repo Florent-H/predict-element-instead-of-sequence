@@ -872,7 +872,7 @@ def predict_year(ann_model_path, ann_datasets, run_ann):
     ax2.set_ylabel("Heating Error [kWh]", fontproperties=font_bold, color="tomato")
     ax2.grid(which="both", color="k", linewidth=0.7, alpha=0.2)
 
-    year_pred_dir_path = Path("pred_elem_seq/datafiles/results")
+    year_pred_dir_path = Path("pred_elem_seq/datafiles/figures/year_pred")
     year_pred_dir_path.mkdir(parents=True, exist_ok=True)
     fig.savefig(
         year_pred_dir_path / f"{ann_model_path.stem} - heat_feb - weather.pdf",
@@ -942,9 +942,7 @@ def predict_year(ann_model_path, ann_datasets, run_ann):
     ax2.grid(which="both", color="k", linewidth=0.7, alpha=0.2)
 
     fig.savefig(
-        Path(
-            f"pred_elem_seq/datafiles/figures/year_pred/{ann_model_path.stem} - cool_aug - weather.pdf"
-        ),
+        year_pred_dir_path / f"{ann_model_path.stem} - cool_aug - weather.pdf",
         bbox_inches="tight",
         pad_inches=0,
     )
