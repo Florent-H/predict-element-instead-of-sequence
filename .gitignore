@@ -129,24 +129,10 @@ dmypy.json
 # besos examples
 /bemsrgts/datafiles/examples
 
-# weather epw files
-*.epw
-
 # datafiles
+eptest/
 *.sav
 *.pkl
-*.csv
-*.svg
-*.idf
 *.parquet
 *.json
-*.png
 *.err
-*.pdf
-*.p
-*.txt
-*.xlsx
-*.epjson
-*.otf
-*.pt
-*.gz
