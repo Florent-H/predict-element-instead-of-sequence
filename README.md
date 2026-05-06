@@ -29,7 +29,7 @@ Use your favourite IDE (or use the command line) to run the main `pytest` functi
     
     The `ann` fixture is an instance of the `AnnConfig` dataclass that contains all the metadata necessary to clearly define the type and characteristics of the surrogate model (*e.g.*, number of hidden layers), the details of the BEM (*e.g.*, building parameters in the surrogate design space), and details of the surrogate model training and testing datasets (*e.g.*, number of samples).
 
-    The `ann_datasets_train` fixture is an instance of the `AnnDatasets` class that is used to generate the surrogate model training and testing  by simulating the BEM through a design of experiment.
+    The `ann_datasets_train` fixture is an instance of the `AnnDatasets` class that is used to generate the surrogate model training and testing data by simulating the BEM through a design of experiment.
 
     2. `test_get_surrogate_weather`
 
