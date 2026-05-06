@@ -130,7 +130,8 @@ dmypy.json
 /bemsrgts/datafiles/examples
 
 # datafiles
-eptest/
+pred_elem_seq/eptest/
+pred_elem_seq/datafiles/inputs/variables/weather_invariant
 *.sav
 *.pkl
 *.parquet
