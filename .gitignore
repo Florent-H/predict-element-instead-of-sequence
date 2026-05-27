@@ -132,6 +132,7 @@ dmypy.json
 # datafiles
 pred_elem_seq/eptest/
 pred_elem_seq/datafiles/inputs/variables/weather_invariant
+pred_elem_seq/datafiles/figures
 *.sav
 *.pkl
 *.parquet
