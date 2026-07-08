@@ -9,9 +9,10 @@ To install and test the code yourself, follow these steps:
 2. Install [EnergyPlus V24-1-0](https://github.com/NatLabRockies/EnergyPlus/releases/tag/v24.1.0). 
     **NOTE:** Make sure that the path to the EnergyPlus executable is correctly defined in the `run` method of the `Building` class in `pred_elem_seq/simulation.py`. The path is set to `C:/EnergyPlusV24-1-0/energyplus.exe` by default.
 3. Install the [uv](https://docs.astral.sh/uv/) Python package and project manager.
-4. Run the following two commands in the `predict-element-instead-of-sequence` root directory: 
+4. Run the following three commands in the `predict-element-instead-of-sequence` root directory: 
     1. `uv venv`
-    2. `uv pip install -r pyproject.toml`.
+    2. `.venv/scripts/activate`
+    3. `uv pip install -r pyproject.toml`.
 
 ## Running the code
 
